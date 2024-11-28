@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PNG to JPG Converter</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding-top: 50px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container text-center">
+    <h1 class="mb-4">PNG to JPG Converter</h1>
+    
+    <div class="card p-4 shadow-sm">
+      <div class="card-body">
+        <p class="card-text">Upload a PNG image to convert it into a JPG format.</p>
+        
+        <!-- Image upload input -->
+        <input type="file" id="imageLoader" accept="image/png" class="form-control mb-3">
+        
+        <!-- Convert and download button -->
+        <button class="btn btn-primary" id="convertBtn" disabled>Convert to JPG</button>
+        
+        <!-- Download link -->
+        <a href="#" id="downloadLink" class="btn btn-success mt-3" style="display:none;">Download JPG</a>
+      </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    const imageLoader = document.getElementById('imageLoader');
+    const convertBtn = document.getElementById('convertBtn');
+    const downloadLink = document.getElementById('downloadLink');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let img = new Image();
+
+    imageLoader.addEventListener('change', handleImage, false);
+
+    function handleImage(e) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          // Enable the convert button once an image is loaded
+          convertBtn.disabled = false;
+        }
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(e.target.files[0]);
+    }
+
+    convertBtn.addEventListener('click', function() {
+      // Convert canvas to JPG by changing the MIME type
+      const jpgData = canvas.toDataURL('image/jpeg', 1.0); // 1.0 is the quality
+
+      // Enable download link
+      downloadLink.href = jpgData;
+      downloadLink.download = 'converted_image.jpg';
+      downloadLink.style.display = 'inline-block';
+    });
+  </script>
+</body>
+</html>
